@@ -19,8 +19,6 @@
     return nil;
 }
 
-+ (NSDictionary *)keyChainSetting {
-    return nil;
-}
+
 
 @end
