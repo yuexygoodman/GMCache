@@ -71,11 +71,12 @@
                                           buffer,
                                           bufferSize,
                                           &numBytesEncrypted);
+    NSData * encryptData=nil;
     if (cryptStatus == kCCSuccess) {
-        return [NSData dataWithBytesNoCopy:buffer length:numBytesEncrypted];
+        encryptData=[NSData dataWithBytesNoCopy:buffer length:numBytesEncrypted];
     }
     free(buffer);
-    return nil;
+    return encryptData;
 }
 
 + (NSData *)decryptWithData:(NSData *)data key:(NSString *)secureKey {
@@ -102,11 +103,12 @@
                                           buffer,
                                           bufferSize,
                                           &numBytesDecrypted);
+    NSData * decryptData=nil;
     if (cryptStatus == kCCSuccess) {
-        return [NSData dataWithBytesNoCopy:buffer length:numBytesDecrypted];
+        decryptData=[NSData dataWithBytesNoCopy:buffer length:numBytesDecrypted];
     }
     free(buffer);
-    return nil;
+    return decryptData;
 }
 
 #pragma -mark acess keychain
