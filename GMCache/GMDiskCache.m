@@ -12,6 +12,7 @@
 
 @interface GMDiskCache ()
 {
+    NSString * _path;
     FMDatabaseQueue * _dbQueue;
 }
 
@@ -36,6 +37,10 @@
         _secureKey=[GMCacheSecurity secureKeyWithCacheIdentifier:self.identifier];
     }
     return _secureKey;
+}
+
+- (NSString *)path {
+    return [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
 }
 
 - (BOOL)containsCacheKey:(NSString *)key {
@@ -133,7 +138,7 @@
 }
 
 - (NSString *)dbPath {
-    NSString * fullPath=[[_path stringByAppendingPathComponent:_identifier] stringByAppendingString:@".db"];
+    NSString * fullPath=[[self.path stringByAppendingPathComponent:_identifier] stringByAppendingString:@".db"];
     return fullPath;
 }
 
