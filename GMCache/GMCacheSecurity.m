@@ -45,13 +45,8 @@
 + (NSString *)generatedAESKey {
     char aesKey[32];
     for (int i=0; i<32; i++) {
-        int num=arc4random()%36;
-        if (num>26) {
-            aesKey[i]=36-num;
-        }
-        else {
-            aesKey[i]=num+97;
-        }
+        int num=arc4random()%93+33;
+        aesKey[i]=num;
         i++;
     }
     return [NSString stringWithCString:aesKey encoding:NSUTF8StringEncoding];
