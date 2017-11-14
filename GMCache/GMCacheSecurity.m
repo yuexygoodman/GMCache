@@ -47,7 +47,6 @@
     for (int i=0; i<32; i++) {
         int num=arc4random()%93+33;
         aesKey[i]=num;
-        i++;
     }
     return [NSString stringWithCString:aesKey encoding:NSUTF8StringEncoding];
 }
@@ -113,19 +112,37 @@
 #pragma -mark acess keychain
 
 + (NSDictionary *)keyChainSettingWithIdentifier:(NSString *)identifier {
-    NSMutableDictionary *keyChainQueryDictaionary = [[NSMutableDictionary alloc]init];
-    [keyChainQueryDictaionary setObject:(id)kSecClassGenericPassword forKey:(id)kSecClass];
-    [keyChainQueryDictaionary setObject:identifier forKey:(id)kSecAttrService];
-    [keyChainQueryDictaionary setObject:@"security.GMCache.goodman" forKey:(id)kSecAttrAccount];
-    return keyChainQueryDictaionary;
+    NSMutableDictionary *keychainSetting = [[NSMutableDictionary alloc]init];
+    [keychainSetting setObject:(id)kSecClassGenericPassword forKey:(id)kSecClass];
+    [keychainSetting setObject:identifier forKey:(id)kSecAttrService];
+    [keychainSetting setObject:@"security.GMCache.goodman" forKey:(id)kSecAttrAccount];
+    return keychainSetting;
 }
 
-+ (void)saveKey:(NSString *)key forIdentifier:(NSString *)identifier {
-    
++ (BOOL)saveKey:(NSString *)key forIdentifier:(NSString *)identifier {
+    NSMutableDictionary *keychainSetting = [[self keyChainSettingWithIdentifier:identifier] mutableCopy];
+    SecItemDelete((CFDictionaryRef)keychainSetting);
+    [keychainSetting setObject:[NSKeyedArchiver archivedDataWithRootObject:key] forKey:(id)kSecValueData];
+    OSStatus status= SecItemAdd((CFDictionaryRef)keychainSetting, NULL);
+    if (status == noErr) {
+        return YES;
+    }
+    return NO;
 }
 
 + (NSString *)getKeyWithIdentifier:(NSString *)identifier {
-    return nil;
+    NSString * key=nil;
+    NSMutableDictionary *keychainSetting = [[self keyChainSettingWithIdentifier:identifier] mutableCopy];
+    [keychainSetting setObject:(id)kCFBooleanTrue forKey:(id)kSecReturnData];
+    [keychainSetting setObject:(id)kSecMatchLimitOne forKey:(id)kSecMatchLimit];
+    CFDataRef keyData = NULL;
+    if (SecItemCopyMatching((CFDictionaryRef)keychainSetting, (CFTypeRef *)&keyData) == noErr) {
+        if (keyData) {
+            key=[NSKeyedUnarchiver unarchiveObjectWithData:(__bridge NSData * _Nonnull)(keyData)];
+            CFRelease(keyData);
+        }
+    }
+    return key;
 }
 
 @end
