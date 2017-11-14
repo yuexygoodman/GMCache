@@ -26,6 +26,7 @@
     if (self) {
         _identifier=identifier;
         _path=path;
+        [self openDB];
     }
     return self;
 }
@@ -38,7 +39,15 @@
 }
 
 - (BOOL)containsCacheKey:(NSString *)key {
-    return YES;
+    __block BOOL rst=NO;
+    [_dbQueue inDatabase:^(FMDatabase * _Nonnull db) {
+        FMResultSet * resultSet=[db executeQuery:@"select 1 from gm_cache where key=?",key];
+        if (resultSet && resultSet.next) {
+            rst=YES;
+            [resultSet close];
+        }
+    }];
+    return rst;
 }
 
 - (BOOL)cacheObject:(id) obj forKey:(NSString *) key {

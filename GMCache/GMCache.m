@@ -46,9 +46,7 @@
 
 - (id)initWithIdentifier:(NSString *)identifier path:(NSString *)path {
     if (![identifier isKindOfClass:[NSString class]] || identifier.length==0)return nil;
-    if ([[self class] cacheWithIdentifier:identifier]) {
-        return nil;
-    }
+    if ([GMCacheProvider containsCacheIdentifier:identifier])return nil;
     self=[self init];
     if (self) {
         _identifier=identifier;
@@ -94,7 +92,7 @@
     }
 }
 
-- (id)ObjectForCacheKey:(NSString *)key {
+- (id)objectForCacheKey:(NSString *)key {
     if (![key isKindOfClass:[NSString class]] || key.length==0)return nil;
     id obj=[_memCache objectForKey:key];
     if (!obj) {
@@ -103,21 +101,17 @@
     return obj;
 }
 
-- (BOOL)deleteObjectForCacheKey:(NSString *)key {
-    if (![key isKindOfClass:[NSString class]] || key.length==0)return NO;
+- (void)deleteObjectForCacheKey:(NSString *)key {
+    if (![key isKindOfClass:[NSString class]] || key.length==0)return;
     if ([_diskCache deleteObjectForCacheKey:key]) {
         [_memCache removeObjectForKey:key];
-        return YES;
     }
-    return NO;
 }
 
-- (BOOL)removeAllObjects {
+- (void)removeAllObjects {
     if ([_diskCache removeAllObjects]) {
         [_memCache removeAllObjects];
-        return YES;
     }
-    return NO;
 }
 
 @end

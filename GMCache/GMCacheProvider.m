@@ -22,6 +22,20 @@ static FMDatabaseQueue * ST_GMCache_DBQueue;
     }
 }
 
++ (BOOL)containsCacheIdentifier:(NSString *)identifier {
+    if (![identifier isKindOfClass:[NSString class]] || identifier.length==0)return NO;
+    if ([ST_GMCache_MapTable objectForKey:identifier])return YES;
+    __block BOOL rst=NO;
+    [ST_GMCache_DBQueue inDatabase:^(FMDatabase * _Nonnull db) {
+        FMResultSet * resultSet=[db executeQuery:@"select 1 from gm_caches where identifier=?",identifier];
+        if (resultSet && resultSet.next) {
+            rst=YES;
+            [resultSet close];
+        }
+    }];
+    return rst;
+}
+
 + (GMCache *)cacheWithIdentifier:(NSString *)identifier {
     if (![identifier isKindOfClass:[NSString class]] || identifier.length==0)return nil;
     GMCache * cache=[ST_GMCache_MapTable objectForKey:identifier];
