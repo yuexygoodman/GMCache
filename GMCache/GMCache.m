@@ -11,7 +11,7 @@
 #import "GMMemoryCache.h"
 #import "GMCacheProvider.h"
 
-#define GMCache_Identifier_Default @"default.identifier.gmcache.goodman"
+#define GMCache_Identifier_Default @"default_identifier_gmcache_goodman"
 #define GMCache_DiskLimit NSIntegerMax
 #define GMCache_MemLimit NSIntegerMax
 
@@ -39,14 +39,13 @@
 }
 
 - (id)initWithIdentifier:(NSString *)identifier {
-    NSString * defaultPath=[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+    NSString * defaultPath=[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
     if (defaultPath.length==0)return nil;
     return [self initWithIdentifier:identifier path:defaultPath];
 }
 
 - (id)initWithIdentifier:(NSString *)identifier path:(NSString *)path {
     if (![identifier isKindOfClass:[NSString class]] || identifier.length==0)return nil;
-    if ([GMCacheProvider containsCacheIdentifier:identifier])return nil;
     self=[self init];
     if (self) {
         _identifier=identifier;

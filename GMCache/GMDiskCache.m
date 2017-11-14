@@ -7,7 +7,7 @@
 //
 
 #import "GMDiskCache.h"
-#import <FMDB/FMDB.h>
+#import "FMDB.h"
 #import "GMCacheSecurity.h"
 
 @interface GMDiskCache ()
@@ -84,6 +84,7 @@
             NSData * data=[resultSet dataForColumnIndex:1];
             BOOL secured=[resultSet boolForColumnIndex:2];
             NSDate * create_time=[resultSet dateForColumnIndex:3];
+            [resultSet close];
             if ([[NSDate dateWithTimeInterval:self.cacheAge sinceDate:create_time] compare:[NSDate new]]==NSOrderedAscending) {
                 if (secured) {
                     data=[GMCacheSecurity unSecureValue:data withKey:self.secureKey];
@@ -121,7 +122,7 @@
         value BLOB,\
         secured BOOLEAN,\
         create_time DATE not null,\
-        access_time DATE";
+        access_time DATE)";
         __block BOOL rst;
         [_dbQueue inDatabase:^(FMDatabase * _Nonnull db) {
             rst=[db executeUpdate:initSql];
@@ -132,7 +133,8 @@
 }
 
 - (NSString *)dbPath {
-    return [[_path stringByAppendingPathComponent:_identifier] stringByAppendingString:@".db"];
+    NSString * fullPath=[[_path stringByAppendingPathComponent:_identifier] stringByAppendingString:@".db"];
+    return fullPath;
 }
 
 @end

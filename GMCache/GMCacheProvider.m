@@ -7,7 +7,7 @@
 //
 
 #import "GMCacheProvider.h"
-#import <FMDB/FMDB.h>
+#import "FMDB.h"
 #import "GMCache.h"
 
 static NSMapTable * ST_GMCache_MapTable;
@@ -39,16 +39,17 @@ static FMDatabaseQueue * ST_GMCache_DBQueue;
 + (GMCache *)cacheWithIdentifier:(NSString *)identifier {
     if (![identifier isKindOfClass:[NSString class]] || identifier.length==0)return nil;
     GMCache * cache=[ST_GMCache_MapTable objectForKey:identifier];
+    NSLog(@"cache:%@",cache);
     if (!cache) {
-        [self getCacheFromDisk:identifier];
+        cache=[self getCacheFromDisk:identifier];
     }
     return cache;
 }
 
 + (BOOL)openDB {
-    NSString * dbPath=[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+    NSString * dbPath=[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
     if (dbPath.length>0) {
-        dbPath=[dbPath stringByAppendingPathComponent:@"caches.GMCache.goodman.db"];
+        dbPath=[dbPath stringByAppendingPathComponent:@"caches_GMCache_goodman.db"];
         ST_GMCache_DBQueue=[FMDatabaseQueue databaseQueueWithPath:dbPath];
         if (ST_GMCache_DBQueue) {
             NSString * initSql=@"CREATE TABLE IF NOT EXISTS gm_caches ( \
@@ -69,38 +70,53 @@ static FMDatabaseQueue * ST_GMCache_DBQueue;
 }
 
 + (BOOL)saveCache:(GMCache *)cache {
-    [ST_GMCache_MapTable setValue:cache forKey:cache.identifier];
+    [ST_GMCache_MapTable setObject:cache forKey:cache.identifier];
     return [self saveCacheToDisk:cache];
 }
 
 + (BOOL)saveCacheToDisk:(GMCache *)cache {
-    __block BOOL res=NO;
+    __block BOOL rst=NO;
     [ST_GMCache_DBQueue inDatabase:^(FMDatabase * _Nonnull db) {
-        res=[db executeUpdate:@"insert into gm_caches (identifier,path,cache_age,disk_limit,mem_limit,count_limit) values(?,?,?,?,?,?);",cache.identifier,cache.path,cache.cacheAge,cache.diskLimit,cache.memoryLimit,1];
+        FMResultSet *resultSet=[db executeQuery:@"select 1 from gm_caches where identifier=?",cache.identifier];
+        if (resultSet && resultSet.next) {
+            [resultSet close];
+            rst=[db executeUpdate:@"update gm_caches set cache_age=?,disk_limit=?,mem_limit=?,count_limit=?",@(cache.cacheAge),@(cache.diskLimit),@(cache.memoryLimit),@(0)];
+        }
+        else {
+            rst=[db executeUpdate:@"insert into gm_caches (identifier,path,cache_age,disk_limit,mem_limit,count_limit) values(?,?,?,?,?,?)",cache.identifier,cache.path,@(cache.cacheAge),@(cache.diskLimit),@(cache.memoryLimit),@(0)];
+        }
     }];
-    return res;
+    return rst;
 }
 
 + (GMCache *)getCacheFromDisk:(NSString *)identifier {
     if (![identifier isKindOfClass:[NSString class]] || identifier.length==0)return nil;
-    __block GMCache * cache;
+    __block NSString * path;
+    __block NSUInteger cache_age;
+    __block NSUInteger disk_limit;
+    __block NSUInteger mem_limit;;
+    __block NSUInteger count_limit;
+    __block BOOL rst=NO;
     [ST_GMCache_DBQueue inDatabase:^(FMDatabase * _Nonnull db) {
         FMResultSet * resultSet=[db executeQuery:@"select * from gm_caches where identifier=?",identifier];
         if (resultSet && [resultSet next]) {
-            NSString * identifier=[resultSet stringForColumnIndex:0];
-            NSString * path=[resultSet stringForColumnIndex:1];
-            NSUInteger cache_age=[resultSet longForColumnIndex:2];
-            NSUInteger disk_limit=[resultSet longForColumnIndex:3];
-            NSUInteger mem_limit=[resultSet longForColumnIndex:4];
-            NSUInteger count_limit=[resultSet longForColumnIndex:5];
+            rst=YES;
+            path=[resultSet stringForColumnIndex:1];
+            cache_age=[resultSet longForColumnIndex:2];
+            disk_limit=[resultSet longForColumnIndex:3];
+            mem_limit=[resultSet longForColumnIndex:4];
+            count_limit=[resultSet longForColumnIndex:5];
             [resultSet close];
-            cache=[[GMCache alloc] initWithIdentifier:identifier path:path];
-            cache.diskLimit=disk_limit;
-            cache.memoryLimit=mem_limit;
-            cache.cacheAge=cache_age;
         }
     }];
-    return cache;
+    if (rst) {
+        GMCache * cache=[[GMCache alloc] initWithIdentifier:identifier path:path];
+        cache.diskLimit=disk_limit;
+        cache.memoryLimit=mem_limit;
+        cache.cacheAge=cache_age;
+        return cache;
+    }
+    return nil;
 }
 
 @end
