@@ -7,7 +7,7 @@
 //
 
 #import "GMDiskCache.h"
-#import "FMDB.h"
+#import <FMDB/FMDB.h>
 #import "GMCacheSecurity.h"
 
 @interface GMDiskCache ()

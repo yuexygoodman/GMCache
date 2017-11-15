@@ -7,7 +7,7 @@
 //
 
 #import "GMCacheProvider.h"
-#import "FMDB.h"
+#import <FMDB/FMDB.h>
 #import "GMCache.h"
 
 static NSMapTable * ST_GMCache_MapTable;
