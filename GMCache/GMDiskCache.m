@@ -39,10 +39,6 @@
     return _secureKey;
 }
 
-- (NSString *)path {
-    return [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
-}
-
 - (BOOL)containsCacheKey:(NSString *)key {
     __block BOOL rst=NO;
     [_dbQueue inDatabase:^(FMDatabase * _Nonnull db) {

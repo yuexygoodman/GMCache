@@ -12,7 +12,7 @@
 
 @property(copy,nonatomic,readonly)NSString * identifier;
 
-@property(assign,nonatomic,readonly)NSString * path;
+@property(copy,nonatomic,readonly)NSString * path;
 
 @property(assign,nonatomic)NSUInteger diskLimit;
 

@@ -54,7 +54,8 @@ static FMDatabaseQueue * ST_GMCache_DBQueue;
         if (ST_GMCache_DBQueue) {
             NSString * initSql=@"CREATE TABLE IF NOT EXISTS gm_caches ( \
             identifier varchar(50) PRIMARY KEY not null,\
-            path text not null,\
+            directory INTEGER,\
+            subpath text,\
             cache_age INTEGER,\
             disk_limit INTEGER,\
             mem_limit INTEGER,\
@@ -80,10 +81,10 @@ static FMDatabaseQueue * ST_GMCache_DBQueue;
         FMResultSet *resultSet=[db executeQuery:@"select 1 from gm_caches where identifier=?",cache.identifier];
         if (resultSet && resultSet.next) {
             [resultSet close];
-            rst=[db executeUpdate:@"update gm_caches set cache_age=?,disk_limit=?,mem_limit=?,count_limit=?",@(cache.cacheAge),@(cache.diskLimit),@(cache.memoryLimit),@(0)];
+            rst=[db executeUpdate:@"update gm_caches set cache_age=?,disk_limit=?,mem_limit=?,count_limit=?",@(cache.cacheAge),@(cache.diskLimit),@(cache.memoryLimit),@(cache.countLimit)];
         }
         else {
-            rst=[db executeUpdate:@"insert into gm_caches (identifier,path,cache_age,disk_limit,mem_limit,count_limit) values(?,?,?,?,?,?)",cache.identifier,cache.path,@(cache.cacheAge),@(cache.diskLimit),@(cache.memoryLimit),@(0)];
+            rst=[db executeUpdate:@"insert into gm_caches (identifier,directory,subpath,cache_age,disk_limit,mem_limit,count_limit) values(?,?,?,?,?,?)",cache.identifier,cache.directory,cache.subPath?cache.subPath:@"",@(cache.cacheAge),@(cache.diskLimit),@(cache.memoryLimit),@(cache.countLimit)];
         }
     }];
     return rst;
@@ -91,17 +92,19 @@ static FMDatabaseQueue * ST_GMCache_DBQueue;
 
 + (GMCache *)getCacheFromDisk:(NSString *)identifier {
     if (![identifier isKindOfClass:[NSString class]] || identifier.length==0)return nil;
-    __block NSString * path;
+    __block NSSearchPathDirectory directory;
+    __block NSString * subPath;
     __block NSUInteger cache_age;
     __block NSUInteger disk_limit;
     __block NSUInteger mem_limit;;
     __block NSUInteger count_limit;
     __block BOOL rst=NO;
     [ST_GMCache_DBQueue inDatabase:^(FMDatabase * _Nonnull db) {
-        FMResultSet * resultSet=[db executeQuery:@"select * from gm_caches where identifier=?",identifier];
+        FMResultSet * resultSet=[db executeQuery:@"select directory,subpath,cache_age,disk_limit,mem_limit,count_limit from gm_caches where identifier=?",identifier];
         if (resultSet && [resultSet next]) {
             rst=YES;
-            path=[resultSet stringForColumnIndex:1];
+            directory=[resultSet longForColumnIndex:0];
+            subPath=[resultSet stringForColumnIndex:1];
             cache_age=[resultSet longForColumnIndex:2];
             disk_limit=[resultSet longForColumnIndex:3];
             mem_limit=[resultSet longForColumnIndex:4];
@@ -110,7 +113,7 @@ static FMDatabaseQueue * ST_GMCache_DBQueue;
         }
     }];
     if (rst) {
-        GMCache * cache=[[GMCache alloc] initWithIdentifier:identifier path:path];
+        GMCache * cache=[[GMCache alloc] initWithIdentifier:identifier directory:directory subPath:subPath];
         cache.diskLimit=disk_limit;
         cache.memoryLimit=mem_limit;
         cache.cacheAge=cache_age;

@@ -17,7 +17,9 @@
 
 @property(copy,nonatomic,readonly)NSString * identifier;
 
-@property(assign,nonatomic,readonly)NSString * path;
+@property(assign,nonatomic,readonly)NSSearchPathDirectory directory;
+
+@property(copy,nonatomic,readonly)NSString * subPath;
 
 @property(assign,nonatomic)NSUInteger memoryLimit;
 
@@ -55,11 +57,12 @@
 /**
  Initialize a new cache with identifier and a custom path.
 
- @param identifier An unique key for cache.
- @param path the sqlite file would be saved there.
- @return obj.
+ @param identifier The identifier of a cache.
+ @param directory NSSearchPathDirectory
+ @param subPath a sub path appended to directory
+ @return object
  */
-- (id)initWithIdentifier:(NSString *)identifier path:(NSString *)path;
+- (id)initWithIdentifier:(NSString *)identifier directory:(NSSearchPathDirectory)directory subPath:(NSString *)subPath;
 
 /**
  If current cache contains the key.

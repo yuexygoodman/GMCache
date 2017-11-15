@@ -39,19 +39,19 @@
 }
 
 - (id)initWithIdentifier:(NSString *)identifier {
-    NSString * defaultPath=[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
-    if (defaultPath.length==0)return nil;
-    return [self initWithIdentifier:identifier path:defaultPath];
+    return [self initWithIdentifier:identifier directory:NSCachesDirectory subPath:nil];
 }
 
-- (id)initWithIdentifier:(NSString *)identifier path:(NSString *)path {
+- (id)initWithIdentifier:(NSString *)identifier directory:(NSSearchPathDirectory)directory subPath:(NSString *)subPath {
     if (![identifier isKindOfClass:[NSString class]] || identifier.length==0)return nil;
     self=[self init];
     if (self) {
         _identifier=identifier;
-        _path=path;
+        _directory=directory;
+        _subPath=subPath;
         _cacheQueue=dispatch_queue_create([identifier UTF8String], NULL);
-        _diskCache=[[GMDiskCache alloc] initWithIdentifier:_identifier path:_path];
+        NSString * path=[[NSSearchPathForDirectoriesInDomains(_directory, NSUserDomainMask, YES) firstObject] stringByAppendingString:_subPath?_subPath:@""];
+        _diskCache=[[GMDiskCache alloc] initWithIdentifier:_identifier path:path];
         _memCache=[GMMemoryCache new];
         [GMCacheProvider saveCache:self];
     }
