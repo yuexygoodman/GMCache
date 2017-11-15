@@ -20,8 +20,6 @@
 		80FE343F1FB5484700D2D959 /* GMCacheSecurity.m in Sources */ = {isa = PBXBuildFile; fileRef = 80FE343D1FB5484700D2D959 /* GMCacheSecurity.m */; };
 		80FE34481FB5B1EB00D2D959 /* GMCacheProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 80FE34461FB5B1EB00D2D959 /* GMCacheProvider.h */; };
 		80FE34491FB5B1EB00D2D959 /* GMCacheProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 80FE34471FB5B1EB00D2D959 /* GMCacheProvider.m */; };
-		80FE344C1FB9967300D2D959 /* GMKeyChain.h in Headers */ = {isa = PBXBuildFile; fileRef = 80FE344A1FB9967300D2D959 /* GMKeyChain.h */; };
-		80FE344D1FB9967300D2D959 /* GMKeyChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 80FE344B1FB9967300D2D959 /* GMKeyChain.m */; };
 		9EE3136B25082C3B4233B52E /* Pods_GMCacheTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 13F130F559F5EACFA1BE4698 /* Pods_GMCacheTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -56,8 +54,6 @@
 		80FE343D1FB5484700D2D959 /* GMCacheSecurity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GMCacheSecurity.m; sourceTree = "<group>"; };
 		80FE34461FB5B1EB00D2D959 /* GMCacheProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GMCacheProvider.h; sourceTree = "<group>"; };
 		80FE34471FB5B1EB00D2D959 /* GMCacheProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GMCacheProvider.m; sourceTree = "<group>"; };
-		80FE344A1FB9967300D2D959 /* GMKeyChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GMKeyChain.h; sourceTree = "<group>"; };
-		80FE344B1FB9967300D2D959 /* GMKeyChain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GMKeyChain.m; sourceTree = "<group>"; };
 		841E4ED046109CC55759911D /* Pods-GMCache.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GMCache.debug.xcconfig"; path = "Pods/Target Support Files/Pods-GMCache/Pods-GMCache.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -136,8 +132,6 @@
 				80FE343D1FB5484700D2D959 /* GMCacheSecurity.m */,
 				80FE34461FB5B1EB00D2D959 /* GMCacheProvider.h */,
 				80FE34471FB5B1EB00D2D959 /* GMCacheProvider.m */,
-				80FE344A1FB9967300D2D959 /* GMKeyChain.h */,
-				80FE344B1FB9967300D2D959 /* GMKeyChain.m */,
 			);
 			path = GMCache;
 			sourceTree = "<group>";
@@ -162,7 +156,6 @@
 				80FE343A1FB547C600D2D959 /* GMMemoryCache.h in Headers */,
 				80FE34361FB5479900D2D959 /* GMDiskCache.h in Headers */,
 				80FE33681FB3DD4600D2D959 /* GMCache.h in Headers */,
-				80FE344C1FB9967300D2D959 /* GMKeyChain.h in Headers */,
 				80FE343E1FB5484700D2D959 /* GMCacheSecurity.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -355,7 +348,6 @@
 				80FE343B1FB547C600D2D959 /* GMMemoryCache.m in Sources */,
 				80FE33691FB3DD4600D2D959 /* GMCache.m in Sources */,
 				80FE34371FB5479900D2D959 /* GMDiskCache.m in Sources */,
-				80FE344D1FB9967300D2D959 /* GMKeyChain.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
