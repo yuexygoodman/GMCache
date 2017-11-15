@@ -10,6 +10,7 @@
 #import <FMDB/FMDB.h>
 #import "GMCache.h"
 
+static dispatch_semaphore_t ST_GMCache_Semephore;
 static NSCache * ST_GMCache_MapTable;
 static FMDatabaseQueue * ST_GMCache_DBQueue;
 

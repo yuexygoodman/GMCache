@@ -19,7 +19,6 @@
 {
     GMDiskCache * _diskCache;
     GMMemoryCache * _memCache;
-    dispatch_queue_t _cacheQueue;
 }
 @end
 
@@ -51,7 +50,6 @@
         _identifier=identifier;
         _directory=directory;
         _subPath=subPath;
-        _cacheQueue=dispatch_queue_create([identifier UTF8String], NULL);
         NSString * path=[[NSSearchPathForDirectoriesInDomains(_directory, NSUserDomainMask, YES) firstObject] stringByAppendingString:_subPath?_subPath:@""];
         _diskCache=[[GMDiskCache alloc] initWithIdentifier:_identifier path:path];
         _memCache=[GMMemoryCache new];
