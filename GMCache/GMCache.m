@@ -25,6 +25,8 @@
 
 @implementation GMCache
 
+#pragma -mark initialize methods
+
 + (instancetype)defaultCache {
     GMCache *defaultCache=[self cacheWithIdentifier:GMCache_Identifier_Default];
     if (!defaultCache) {
@@ -57,6 +59,8 @@
     }
     return self;
 }
+
+#pragma -mark (select,update,insert,delete) methods
 
 - (BOOL)containsCacheKey:(NSString *)key {
     if (![key isKindOfClass:[NSString class]] || key.length==0)return NO;
@@ -111,6 +115,34 @@
     if ([_diskCache removeAllObjects]) {
         [_memCache removeAllObjects];
     }
+}
+
+#pragma -mark getters and setters
+
+- (void)setMemoryLimit:(NSUInteger)memoryLimit {
+    _memoryLimit=memoryLimit;
+    _memCache.totalCostLimit=memoryLimit;
+}
+
+- (void)setDiskLimit:(NSUInteger)diskLimit {
+    _diskLimit=diskLimit;
+    _diskCache.diskLimit=diskLimit;
+}
+
+- (void)setCountLimit:(NSUInteger)countLimit {
+    _countLimit=countLimit;
+    _memCache.countLimit=countLimit;
+    _diskCache.countLimit=countLimit;
+}
+
+- (void)setCacheAge:(NSUInteger)cacheAge {
+    _cacheAge=cacheAge;
+    _diskCache.cacheAge=cacheAge;
+}
+
+- (void)setSecured:(BOOL)secured {
+    _secured=secured;
+    _diskCache.secured=secured;
 }
 
 @end

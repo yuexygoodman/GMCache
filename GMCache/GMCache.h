@@ -25,11 +25,11 @@
 
 @property(assign,nonatomic)NSUInteger diskLimit;
 
+@property(assign,nonatomic)NSUInteger countLimit;
+
 @property(assign,nonatomic)NSUInteger cacheAge;
 
 @property(assign,nonatomic)BOOL secured;
-
-@property(assign,nonatomic)NSUInteger countLimit;
 
 /**
  Return the global default cache.
