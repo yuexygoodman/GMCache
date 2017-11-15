@@ -17,7 +17,7 @@ static FMDatabaseQueue * ST_GMCache_DBQueue;
 
 + (void)initialize {
     if (!ST_GMCache_MapTable) {
-        ST_GMCache_MapTable=[[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsWeakMemory capacity:1];
+        ST_GMCache_MapTable=[[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory capacity:1];
         [self openDB];
     }
 }
