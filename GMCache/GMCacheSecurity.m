@@ -10,6 +10,8 @@
 #import <Security/Security.h>
 #import <CommonCrypto/CommonCrypto.h>
 
+#define kGMCacheSecuritySecAttrAccount @"security.GMCache.goodman"
+
 @implementation GMCacheSecurity
 
 #pragma -mark public methods
@@ -115,7 +117,7 @@
     NSMutableDictionary *keychainSetting = [[NSMutableDictionary alloc]init];
     [keychainSetting setObject:(id)kSecClassGenericPassword forKey:(id)kSecClass];
     [keychainSetting setObject:identifier forKey:(id)kSecAttrService];
-    [keychainSetting setObject:@"security.GMCache.goodman" forKey:(id)kSecAttrAccount];
+    [keychainSetting setObject:kGMCacheSecuritySecAttrAccount forKey:(id)kSecAttrAccount];
     return keychainSetting;
 }
 
