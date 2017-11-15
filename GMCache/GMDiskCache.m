@@ -52,7 +52,7 @@
 }
 
 - (BOOL)cacheObject:(id) obj forKey:(NSString *) key {
-    return [self cacheObject:obj forKey:key secured:NO];
+    return [self cacheObject:obj forKey:key secured:self.secured];
 }
 
 - (BOOL)cacheObject:(id)obj forKey:(NSString *)key secured:(BOOL)secured {
