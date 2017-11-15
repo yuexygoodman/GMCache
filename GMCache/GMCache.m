@@ -11,7 +11,7 @@
 #import "GMMemoryCache.h"
 #import "GMCacheProvider.h"
 
-#define GMCache_Identifier_Default @"default_identifier_gmcache_goodman"
+#define GMCache_Identifier_Default @"default.identifier.gmcache.goodman"
 #define GMCache_DiskLimit NSIntegerMax
 #define GMCache_MemLimit NSIntegerMax
 
