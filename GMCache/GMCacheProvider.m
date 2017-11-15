@@ -10,14 +10,14 @@
 #import <FMDB/FMDB.h>
 #import "GMCache.h"
 
-static NSMapTable * ST_GMCache_MapTable;
+static NSCache * ST_GMCache_MapTable;
 static FMDatabaseQueue * ST_GMCache_DBQueue;
 
 @implementation GMCacheProvider
 
 + (void)initialize {
     if (!ST_GMCache_MapTable) {
-        ST_GMCache_MapTable=[[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory capacity:1];
+        ST_GMCache_MapTable=[NSCache new];
         [self openDB];
     }
 }
