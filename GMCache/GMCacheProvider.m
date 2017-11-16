@@ -12,7 +12,15 @@
 
 #define GMCache_Caches_Default @"caches.GMCache.goodman.db"
 
-static dispatch_semaphore_t ST_GMCache_Semephore;
+#define Lock(identifier) dispatch_semaphore_t semaphore=[ST_GMCache_Semephores objectForKey:identifier];\
+if (!semaphore) {\
+    semaphore=dispatch_semaphore_create(1);\
+}\
+dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER)
+
+#define UnLock() dispatch_semaphore_signal(semaphore)
+
+static NSMutableDictionary * ST_GMCache_Semephores;
 static NSCache * ST_GMCache_MapTable;
 static FMDatabaseQueue * ST_GMCache_DBQueue;
 
@@ -21,31 +29,20 @@ static FMDatabaseQueue * ST_GMCache_DBQueue;
 + (void)initialize {
     if (!ST_GMCache_MapTable) {
         ST_GMCache_MapTable=[NSCache new];
+        ST_GMCache_Semephores=[NSMutableDictionary new];
         [self openDB];
     }
 }
 
-+ (BOOL)containsCacheIdentifier:(NSString *)identifier {
-    if (![identifier isKindOfClass:[NSString class]] || identifier.length==0)return NO;
-    if ([ST_GMCache_MapTable objectForKey:identifier])return YES;
-    __block BOOL rst=NO;
-    [ST_GMCache_DBQueue inDatabase:^(FMDatabase * _Nonnull db) {
-        FMResultSet * resultSet=[db executeQuery:@"select 1 from gm_caches where identifier=?",identifier];
-        if (resultSet && resultSet.next) {
-            rst=YES;
-            [resultSet close];
-        }
-    }];
-    return rst;
-}
-
 + (GMCache *)cacheWithIdentifier:(NSString *)identifier {
     if (![identifier isKindOfClass:[NSString class]] || identifier.length==0)return nil;
+    Lock(identifier);
     GMCache * cache=[ST_GMCache_MapTable objectForKey:identifier];
     NSLog(@"cache:%@",cache);
     if (!cache) {
         cache=[self getCacheFromDisk:identifier];
     }
+    UnLock();
     return cache;
 }
 

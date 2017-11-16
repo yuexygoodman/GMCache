@@ -10,8 +10,6 @@
 
 @interface GMCacheProvider : NSObject
 
-+ (BOOL)containsCacheIdentifier:(NSString *)identifier;
-
 + (GMCache *)cacheWithIdentifier:(NSString *)identifier;
 
 + (BOOL)saveCache:(GMCache *)cache;
