@@ -120,6 +120,7 @@ static FMDatabaseQueue * ST_GMCache_DBQueue;
         cache.diskLimit=disk_limit;
         cache.memoryLimit=mem_limit;
         cache.cacheAge=cache_age;
+        cache.countLimit=count_limit;
         return cache;
     }
     return nil;
