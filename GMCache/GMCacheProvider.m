@@ -7,19 +7,23 @@
 //
 
 #import "GMCacheProvider.h"
-#import <FMDB/FMDB.h>
+#import "FMDB.h"
 #import "GMCache.h"
 
 #define GMCache_Caches_Default @"caches.GMCache.goodman.db"
 
-#define Lock(identifier) dispatch_semaphore_t semaphore=[ST_GMCache_Semephores objectForKey:identifier];\
+#define Lock(identifier) dispatch_semaphore_wait(ST_GMCache_Lock, DISPATCH_TIME_FOREVER);\
+dispatch_semaphore_t semaphore=[ST_GMCache_Semephores objectForKey:identifier];\
 if (!semaphore) {\
     semaphore=dispatch_semaphore_create(1);\
+    [ST_GMCache_Semephores setObject:semaphore forKey:identifier];\
 }\
+dispatch_semaphore_signal(ST_GMCache_Lock);\
 dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER)
 
 #define UnLock() dispatch_semaphore_signal(semaphore)
 
+static dispatch_semaphore_t ST_GMCache_Lock;
 static NSMutableDictionary * ST_GMCache_Semephores;
 static NSCache * ST_GMCache_MapTable;
 static FMDatabaseQueue * ST_GMCache_DBQueue;
@@ -31,6 +35,7 @@ static FMDatabaseQueue * ST_GMCache_DBQueue;
 + (void)initialize {
     if (!ST_GMCache_MapTable) {
         ST_GMCache_MapTable=[NSCache new];
+        ST_GMCache_Lock=dispatch_semaphore_create(1);
         ST_GMCache_Semephores=[NSMutableDictionary new];
         [self openDB];
     }
@@ -60,12 +65,12 @@ static FMDatabaseQueue * ST_GMCache_DBQueue;
     [ST_GMCache_DBQueue inDatabase:^(FMDatabase * _Nonnull db) {
         FMResultSet *resultSet=[db executeQuery:@"select 1 from gm_caches where identifier=?",cache.identifier];
         if (resultSet && resultSet.next) {
-            [resultSet close];
             rst=[db executeUpdate:@"update gm_caches set cache_age=?,disk_limit=?,mem_limit=?,count_limit=?",@(cache.cacheAge),@(cache.diskLimit),@(cache.memoryLimit),@(cache.countLimit)];
         }
         else {
             rst=[db executeUpdate:@"insert into gm_caches (identifier,directory,subpath,cache_age,disk_limit,mem_limit,count_limit) values(?,?,?,?,?,?)",cache.identifier,cache.directory,cache.subPath?cache.subPath:@"",@(cache.cacheAge),@(cache.diskLimit),@(cache.memoryLimit),@(cache.countLimit)];
         }
+        [resultSet close];
     }];
     return rst;
 }
@@ -89,8 +94,8 @@ static FMDatabaseQueue * ST_GMCache_DBQueue;
             disk_limit=[resultSet longForColumnIndex:3];
             mem_limit=[resultSet longForColumnIndex:4];
             count_limit=[resultSet longForColumnIndex:5];
-            [resultSet close];
         }
+        [resultSet close];
     }];
     if (rst) {
         GMCache * cache=[[GMCache alloc] initWithIdentifier:identifier directory:directory subPath:subPath];
@@ -124,14 +129,13 @@ static FMDatabaseQueue * ST_GMCache_DBQueue;
                 update=[db executeUpdate:initSql];
                 if (!update){*rollback=YES;return;};
                 FMResultSet * resultSet=[db executeQuery:@"select 1 from gm_caches where identifier=?",GMCache_Identifier_Default];
-                if (!resultSet || !resultSet.next) {
-                    [resultSet close];
-                    if (![db executeUpdate:@"insert into gm_caches (identifier,directory,subpath,cache_age,disk_limit,mem_limit,count_limit) values(?,?,?,?,?,?)",GMCache_Identifier_Default,@(GMCache_Dicrectory_Default),GMCache_SubPath_Default?GMCache_SubPath_Default:@"",@(GMCache_CacheAge_Default),@(GMCache_DiskLimit_Default),@(GMCache_MemLimit_Default),@(GMCache_CountLimit_Default)]) {
+                if (!resultSet.next) {
+                    if (![db executeUpdate:@"insert into gm_caches (identifier,directory,subpath,cache_age,disk_limit,mem_limit,count_limit) values(?,?,?,?,?,?,?)",GMCache_Identifier_Default,@(GMCache_Dicrectory_Default),GMCache_SubPath_Default?GMCache_SubPath_Default:@"",@(GMCache_CacheAge_Default),@(GMCache_DiskLimit_Default),@(GMCache_MemLimit_Default),@(GMCache_CountLimit_Default)]) {
                         *rollback=YES;
-                        return;
                     }
                 }
-                update=YES;
+                [resultSet close];
+                update=!*rollback;
             }];
             return update;
         }

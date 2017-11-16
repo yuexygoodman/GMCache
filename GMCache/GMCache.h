@@ -17,8 +17,6 @@
 #define GMCache_CacheAge_Default NSIntegerMax
 #define GMCache_Secured_Default NO
 
-@class GMCacheOperation;
-
 /**
  `GMCache` object is used to cache the data associated with a key,you can adopt it for url cache,local data cache,and so on.
  */
