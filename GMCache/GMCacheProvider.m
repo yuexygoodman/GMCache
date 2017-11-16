@@ -61,8 +61,18 @@ static FMDatabaseQueue * ST_GMCache_DBQueue;
             mem_limit INTEGER,\
             count_limit INTEGER)";
             __block BOOL update=NO;
-            [ST_GMCache_DBQueue inDatabase:^(FMDatabase * _Nonnull db) {
+            [ST_GMCache_DBQueue inTransaction:^(FMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
                 update=[db executeUpdate:initSql];
+                if (!update){*rollback=YES;return;};
+                FMResultSet * resultSet=[db executeQuery:@"select 1 from gm_caches where identifier=?",GMCache_Identifier_Default];
+                if (!resultSet || !resultSet.next) {
+                    [resultSet close];
+                    if (![db executeUpdate:@"insert into gm_caches (identifier,directory,subpath,cache_age,disk_limit,mem_limit,count_limit) values(?,?,?,?,?,?)",GMCache_Identifier_Default,@(GMCache_Dicrectory_Default),GMCache_SubPath_Default?GMCache_SubPath_Default:@"",@(GMCache_CacheAge_Default),@(GMCache_DiskLimit_Default),@(GMCache_MemLimit_Default),@(GMCache_CountLimit_Default)]) {
+                        *rollback=YES;
+                        return;
+                    }
+                }
+                update=YES;
             }];
             return update;
         }

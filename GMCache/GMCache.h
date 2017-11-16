@@ -8,6 +8,15 @@
 
 #import <Foundation/Foundation.h>
 
+#define GMCache_Identifier_Default @"default.identifier.gmcache.goodman"
+#define GMCache_Dicrectory_Default NSCachesDirectory
+#define GMCache_SubPath_Default nil
+#define GMCache_DiskLimit_Default NSIntegerMax
+#define GMCache_MemLimit_Default NSIntegerMax
+#define GMCache_CountLimit_Default NSIntegerMax
+#define GMCache_CacheAge_Default NSIntegerMax
+#define GMCache_Secured_Default NO
+
 @class GMCacheOperation;
 
 /**
