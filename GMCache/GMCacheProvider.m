@@ -10,6 +10,8 @@
 #import <FMDB/FMDB.h>
 #import "GMCache.h"
 
+#define GMCache_Caches_Default @"caches.GMCache.goodman.db"
+
 static dispatch_semaphore_t ST_GMCache_Semephore;
 static NSCache * ST_GMCache_MapTable;
 static FMDatabaseQueue * ST_GMCache_DBQueue;
@@ -50,7 +52,7 @@ static FMDatabaseQueue * ST_GMCache_DBQueue;
 + (BOOL)openDB {
     NSString * dbPath=[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
     if (dbPath.length>0) {
-        dbPath=[dbPath stringByAppendingPathComponent:@"caches_GMCache_goodman.db"];
+        dbPath=[dbPath stringByAppendingPathComponent:GMCache_Caches_Default];
         ST_GMCache_DBQueue=[FMDatabaseQueue databaseQueueWithPath:dbPath];
         if (ST_GMCache_DBQueue) {
             NSString * initSql=@"CREATE TABLE IF NOT EXISTS gm_caches ( \
