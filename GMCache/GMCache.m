@@ -92,6 +92,7 @@
     id obj=[_memCache objectForKey:key];
     if (!obj) {
         obj=[_diskCache objectForCacheKey:key];
+        [_memCache setObject:obj forKey:key];
     }
     return obj;
 }
