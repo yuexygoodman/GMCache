@@ -81,7 +81,9 @@
         }
     }
     else{
-        [_memCache setObject:obj forKey:key];
+        if ([_diskCache deleteObjectForCacheKey:key]) {
+            [_memCache setObject:obj forKey:key];
+        }
     }
 }
 
