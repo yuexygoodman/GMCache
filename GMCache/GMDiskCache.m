@@ -27,16 +27,10 @@
     if (self) {
         _identifier=identifier;
         _path=path;
+        _secureKey=[GMCacheSecurity secureKeyWithCacheIdentifier:_identifier];
         [self openDB];
     }
     return self;
-}
-
-- (NSString *)secureKey {
-    if (!_secureKey) {
-        _secureKey=[GMCacheSecurity secureKeyWithCacheIdentifier:self.identifier];
-    }
-    return _secureKey;
 }
 
 - (BOOL)containsCacheKey:(NSString *)key {

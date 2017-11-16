@@ -23,11 +23,7 @@
 #pragma -mark initialize methods
 
 + (instancetype)defaultCache {
-    GMCache *defaultCache=[self cacheWithIdentifier:GMCache_Identifier_Default];
-    if (!defaultCache) {
-        defaultCache=[[self alloc] initWithIdentifier:GMCache_Identifier_Default];
-    }
-    return defaultCache;
+    return [self cacheWithIdentifier:GMCache_Identifier_Default];
 }
 
 + (instancetype)cacheWithIdentifier:(NSString *)identifier {
