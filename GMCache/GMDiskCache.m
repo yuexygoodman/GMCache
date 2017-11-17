@@ -59,10 +59,10 @@
         [_dbQueue inTransaction:^(FMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
             FMResultSet * resultSet=[db executeQuery:@"select * from gm_cache where key=?",key];
             if (resultSet && resultSet.next) {
-                rst=[db executeUpdate:@"update gm_cache set value=?,update_time=?,secured=?",data,[NSDate new],@(secured)];
+                rst=[db executeUpdate:@"update gm_cache set value=?,update_time=?,secured=?,size=?",data,[NSDate new],@(secured),@(data.length)];
             }
             else {
-                rst=[db executeUpdate:@"insert into gm_cache (key,value,secured,create_time) values(?,?,?,?)",key,data,@(secured),[NSDate new]];
+                rst=[db executeUpdate:@"insert into gm_cache (key,value,secured,create_time,size=?) values(?,?,?,?)",key,data,@(secured),[NSDate new],@(data.length)];
             }
             [resultSet close];
         }];
