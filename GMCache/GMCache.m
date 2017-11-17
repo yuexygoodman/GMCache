@@ -18,21 +18,22 @@
 }
 @end
 
+static GMCache * ST_GMCache_Default;
+
 @implementation GMCache
 
 #pragma -mark initialize methods
 
 + (instancetype)defaultCache {
-    return [self cacheWithIdentifier:GMCache_Identifier_Default];
-}
-
-+ (instancetype)cacheWithIdentifier:(NSString *)identifier {
-    if (![identifier isKindOfClass:[NSString class]] || identifier.length==0)return nil;
-    return [GMCacheProvider cacheWithIdentifier:identifier];
+    if (!ST_GMCache_Default) {
+        ST_GMCache_Default=[[self alloc] initWithIdentifier:GMCache_Identifier_Default];
+        //FIXME: 进行一些初始化设置
+    }
+    return ST_GMCache_Default;
 }
 
 - (id)initWithIdentifier:(NSString *)identifier {
-    return [self initWithIdentifier:identifier directory:NSCachesDirectory subPath:nil];
+    return [self initWithIdentifier:identifier directory:GMCache_Dicrectory_Default subPath:GMCache_SubPath_Default];
 }
 
 - (id)initWithIdentifier:(NSString *)identifier directory:(NSSearchPathDirectory)directory subPath:(NSString *)subPath {
@@ -42,7 +43,7 @@
         _identifier=identifier;
         _directory=directory;
         _subPath=subPath;
-        NSString * path=[[NSSearchPathForDirectoriesInDomains(_directory, NSUserDomainMask, YES) firstObject] stringByAppendingString:_subPath?_subPath:@""];
+        NSString * path=[[NSSearchPathForDirectoriesInDomains(_directory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:_subPath];
         _diskCache=[[GMDiskCache alloc] initWithIdentifier:_identifier path:path];
         _memCache=[GMMemoryCache new];
         [GMCacheProvider saveCache:self];

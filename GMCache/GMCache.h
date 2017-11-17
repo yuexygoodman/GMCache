@@ -10,7 +10,7 @@
 
 #define GMCache_Identifier_Default @"default.identifier.gmcache.goodman"
 #define GMCache_Dicrectory_Default NSCachesDirectory
-#define GMCache_SubPath_Default nil
+#define GMCache_SubPath_Default @"GMCache"
 #define GMCache_DiskLimit_Default NSIntegerMax
 #define GMCache_MemLimit_Default NSIntegerMax
 #define GMCache_CountLimit_Default NSIntegerMax
@@ -44,14 +44,6 @@
  @return `GMPCache` object
  */
 + (instancetype)defaultCache;
-
-/**
- Return a cache that you created with the identifier,if not exists,return nil.
-
- @param identifier The identifier of a cache.
- @return `GMPCache` object or nil.
- */
-+ (instancetype)cacheWithIdentifier:(NSString *)identifier;
 
 /**
  Initialize a new cache with identifier

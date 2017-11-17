@@ -25,7 +25,7 @@ dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER)
 
 static dispatch_semaphore_t ST_GMCache_Lock;
 static NSMutableDictionary * ST_GMCache_Semephores;
-static NSCache * ST_GMCache_MapTable;
+static NSMapTable * ST_GMCache_MapTable;
 static FMDatabaseQueue * ST_GMCache_DBQueue;
 
 @implementation GMCacheProvider
@@ -34,7 +34,7 @@ static FMDatabaseQueue * ST_GMCache_DBQueue;
 
 + (void)initialize {
     if (!ST_GMCache_MapTable) {
-        ST_GMCache_MapTable=[NSCache new];
+        ST_GMCache_MapTable=[[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsWeakMemory capacity:1];
         ST_GMCache_Lock=dispatch_semaphore_create(1);
         ST_GMCache_Semephores=[NSMutableDictionary new];
         [self openDB];
@@ -45,14 +45,7 @@ static FMDatabaseQueue * ST_GMCache_DBQueue;
 
 + (GMCache *)cacheWithIdentifier:(NSString *)identifier {
     if (![identifier isKindOfClass:[NSString class]] || identifier.length==0)return nil;
-    Lock(identifier);
-    GMCache * cache=[ST_GMCache_MapTable objectForKey:identifier];
-    NSLog(@"cache:%@",cache);
-    if (!cache) {
-        cache=[self getCacheFromDisk:identifier];
-    }
-    UnLock();
-    return cache;
+    return [ST_GMCache_MapTable objectForKey:identifier];
 }
 
 + (BOOL)saveCache:(GMCache *)cache {
