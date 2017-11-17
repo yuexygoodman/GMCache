@@ -39,8 +39,8 @@
         FMResultSet * resultSet=[db executeQuery:@"select 1 from gm_cache where key=?",key];
         if (resultSet && resultSet.next) {
             rst=YES;
-            [resultSet close];
         }
+        [resultSet close];
     }];
     return rst;
 }
@@ -59,12 +59,12 @@
         [_dbQueue inTransaction:^(FMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
             FMResultSet * resultSet=[db executeQuery:@"select * from gm_cache where key=?",key];
             if (resultSet && resultSet.next) {
-                [resultSet close];
-                rst=[db executeUpdate:@"update gm_cache set value=?,access_time=?,secured=?",data,[NSDate new],@(secured)];
+                rst=[db executeUpdate:@"update gm_cache set value=?,update_time=?,secured=?",data,[NSDate new],@(secured)];
             }
             else {
                 rst=[db executeUpdate:@"insert into gm_cache (key,value,secured,create_time) values(?,?,?,?)",key,data,@(secured),[NSDate new]];
             }
+            [resultSet close];
         }];
         return rst;
     }
@@ -79,7 +79,6 @@
             NSData * data=[resultSet dataForColumnIndex:1];
             BOOL secured=[resultSet boolForColumnIndex:2];
             NSDate * create_time=[resultSet dateForColumnIndex:3];
-            [resultSet close];
             if ([[NSDate dateWithTimeInterval:self.cacheAge sinceDate:create_time] compare:[NSDate new]]==NSOrderedAscending) {
                 if (secured) {
                     data=[GMCacheSecurity unSecureValue:data withKey:self.secureKey];
@@ -88,7 +87,9 @@
             if (data) {
                 object=[NSKeyedUnarchiver unarchiveObjectWithData:data];
             }
+            [db executeUpdate:@"update gm_cache set access_time=? where key=?",[NSDate new],key];
         }
+        [resultSet close];
     }];
     return object;
 }
@@ -117,7 +118,9 @@
         value BLOB,\
         secured BOOLEAN,\
         create_time DATE not null,\
-        access_time DATE)";
+        update_time DATE,\
+        access_time DATE,\
+        size INTEGER)";
         __block BOOL rst;
         [_dbQueue inDatabase:^(FMDatabase * _Nonnull db) {
             rst=[db executeUpdate:initSql];
