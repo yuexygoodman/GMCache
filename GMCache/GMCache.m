@@ -9,7 +9,6 @@
 #import "GMCache.h"
 #import "GMDiskCache.h"
 #import "GMMemoryCache.h"
-#import "GMCacheProvider.h"
 
 @interface GMCache ()
 {
@@ -46,7 +45,6 @@ static GMCache * ST_GMCache_Default;
         NSString * path=[[NSSearchPathForDirectoriesInDomains(_directory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:_subPath];
         _diskCache=[[GMDiskCache alloc] initWithIdentifier:_identifier path:path];
         _memCache=[GMMemoryCache new];
-        [GMCacheProvider saveCache:self];
     }
     return self;
 }
@@ -114,27 +112,6 @@ static GMCache * ST_GMCache_Default;
 }
 
 #pragma -mark getters and setters
-
-- (void)setMemoryLimit:(NSUInteger)memoryLimit {
-    _memoryLimit=memoryLimit;
-    _memCache.totalCostLimit=memoryLimit;
-}
-
-- (void)setDiskLimit:(NSUInteger)diskLimit {
-    _diskLimit=diskLimit;
-    _diskCache.diskLimit=diskLimit;
-}
-
-- (void)setCountLimit:(NSUInteger)countLimit {
-    _countLimit=countLimit;
-    _memCache.countLimit=countLimit;
-    _diskCache.countLimit=countLimit;
-}
-
-- (void)setCacheAge:(NSUInteger)cacheAge {
-    _cacheAge=cacheAge;
-    _diskCache.cacheAge=cacheAge;
-}
 
 - (void)setSecured:(BOOL)secured {
     _secured=secured;

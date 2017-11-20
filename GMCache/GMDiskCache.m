@@ -78,11 +78,8 @@
         if (resultSet && resultSet.next) {
             NSData * data=[resultSet dataForColumnIndex:1];
             BOOL secured=[resultSet boolForColumnIndex:2];
-            NSDate * create_time=[resultSet dateForColumnIndex:3];
-            if ([[NSDate dateWithTimeInterval:self.cacheAge sinceDate:create_time] compare:[NSDate new]]==NSOrderedAscending) {
-                if (secured) {
-                    data=[GMCacheSecurity unSecureValue:data withKey:self.secureKey];
-                }
+            if (secured) {
+                data=[GMCacheSecurity unSecureValue:data withKey:self.secureKey];
             }
             if (data) {
                 object=[NSKeyedUnarchiver unarchiveObjectWithData:data];

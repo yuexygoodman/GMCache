@@ -11,10 +11,6 @@
 #define GMCache_Identifier_Default @"default.identifier.gmcache.goodman"
 #define GMCache_Dicrectory_Default NSCachesDirectory
 #define GMCache_SubPath_Default @"GMCache"
-#define GMCache_DiskLimit_Default NSIntegerMax
-#define GMCache_MemLimit_Default NSIntegerMax
-#define GMCache_CountLimit_Default NSIntegerMax
-#define GMCache_CacheAge_Default NSIntegerMax
 #define GMCache_Secured_Default NO
 
 /**
@@ -27,14 +23,6 @@
 @property(assign,nonatomic,readonly)NSSearchPathDirectory directory;
 
 @property(copy,nonatomic,readonly)NSString * subPath;
-
-@property(assign,nonatomic)NSUInteger memoryLimit;
-
-@property(assign,nonatomic)NSUInteger diskLimit;
-
-@property(assign,nonatomic)NSUInteger countLimit;
-
-@property(assign,nonatomic)NSUInteger cacheAge;
 
 @property(assign,nonatomic)BOOL secured;
 

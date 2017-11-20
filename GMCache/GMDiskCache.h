@@ -14,10 +14,6 @@
 
 @property(copy,nonatomic,readonly)NSString * path;
 
-@property(assign,nonatomic)NSUInteger diskLimit;
-
-@property(assign,nonatomic)NSUInteger cacheAge;
-
 @property(assign,nonatomic)BOOL secured;
 
 @property(assign,nonatomic)NSUInteger countLimit;
