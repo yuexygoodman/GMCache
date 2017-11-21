@@ -16,8 +16,6 @@
 
 @property(assign,nonatomic)BOOL secured;
 
-@property(assign,nonatomic)NSUInteger countLimit;
-
 - (id)initWithIdentifier:(NSString *)identifier path:(NSString *)path;
 
 - (BOOL)containsCacheKey:(NSString *)key;
