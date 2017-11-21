@@ -25,8 +25,10 @@ static GMCache * ST_GMCache_Default;
 
 + (instancetype)defaultCache {
     if (!ST_GMCache_Default) {
-        ST_GMCache_Default=[[self alloc] initWithIdentifier:GMCache_Identifier_Default];
-        //FIXME: 进行一些初始化设置
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            ST_GMCache_Default=[[self alloc] initWithIdentifier:GMCache_Identifier_Default];
+        });
     }
     return ST_GMCache_Default;
 }

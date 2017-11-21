@@ -62,7 +62,7 @@
                 rst=[db executeUpdate:@"update gm_cache set value=?,update_time=?,secured=?,size=?",data,[NSDate new],@(secured),@(data.length)];
             }
             else {
-                rst=[db executeUpdate:@"insert into gm_cache (key,value,secured,create_time,size=?) values(?,?,?,?)",key,data,@(secured),[NSDate new],@(data.length)];
+                rst=[db executeUpdate:@"insert into gm_cache (key,value,secured,create_time,size) values(?,?,?,?,?)",key,data,@(secured),[NSDate new],@(data.length)];
             }
             [resultSet close];
         }];
@@ -128,6 +128,9 @@
 }
 
 - (NSString *)dbPath {
+    if (![[NSFileManager defaultManager] fileExistsAtPath:self.path isDirectory:NULL]) {
+        [[NSFileManager defaultManager] createDirectoryAtPath:self.path withIntermediateDirectories:YES attributes:nil error:nil];
+    }
     NSString * fullPath=[[self.path stringByAppendingPathComponent:_identifier] stringByAppendingString:@".db"];
     return fullPath;
 }
