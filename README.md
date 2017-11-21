@@ -11,8 +11,8 @@
 `[[GMCache alloc] initWithIdentifier:@"my cache identifier"];`    
 `[[GMCache alloc] initWithIdentifier:@"my cache identifier" directory:@"NSSearchDirectory Enum" subPath:@"my subdirectory"];`      
 
-1、保存数据   
- `[[GMCache defaultCache] cacheObject:@"my object" forKey:@"my key"];//数据存储在内存缓存中和数据库中`   
+1、保存数据    
+`[[GMCache defaultCache] cacheObject:@"my object" forKey:@"my key"];//数据存储在内存缓存中和数据库中`   
  `[[GMCache defaultCache] cacheObject:@"my object" forKey:@"my key" toDisk:NO];//数据只存储到了内存缓存中`        
  `[[GMCache defaultCache] cacheObject:@"my object" forKey:@"my key" secured:YES];//数据存储在内存缓存中，并在加密后存储到数据库中`   
 2、获取数据   
