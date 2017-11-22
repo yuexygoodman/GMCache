@@ -120,4 +120,9 @@ static GMCache * ST_GMCache_Default;
     _diskCache.secured=secured;
 }
 
+- (void)setDbThreshold:(NSUInteger)dbThreshold {
+    _dbThreshold=dbThreshold;
+    _diskCache.dbThreshold=dbThreshold;
+}
+
 @end

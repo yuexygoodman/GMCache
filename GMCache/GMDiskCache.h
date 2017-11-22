@@ -16,6 +16,8 @@
 
 @property(assign,nonatomic)BOOL secured;
 
+@property(assign,nonatomic)NSUInteger dbThreshold;
+
 - (id)initWithIdentifier:(NSString *)identifier path:(NSString *)path;
 
 - (BOOL)containsCacheKey:(NSString *)key;

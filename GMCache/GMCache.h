@@ -26,6 +26,8 @@
 
 @property(assign,nonatomic)BOOL secured;
 
+@property(assign,nonatomic)NSUInteger dbThreshold;
+
 /**
  Return the global default cache.
  
